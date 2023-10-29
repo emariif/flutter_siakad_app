@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_siakad_app/bloc/login/login_bloc.dart';
 
 import '../../common/components/buttons.dart';
 import '../../common/constants/colors.dart';
@@ -48,7 +50,7 @@ class _AuthPageState extends State<AuthPage> {
         ),
       ),
       bottomNavigationBar: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -59,45 +61,14 @@ class _AuthPageState extends State<AuthPage> {
                   useSafeArea: true,
                   isScrollControlled: true,
                   builder: (BuildContext context) {
-                    return LoginBottomSheet(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const DosenPage(),
-                          ),
-                        );
-                      },
+                    return BlocProvider(
+                      create: (context) => LoginBloc(),
+                      child: const LoginBottomSheet(),
                     );
                   },
                 );
               },
-              label: 'CIVITAS AKADEMIK',
-            ),
-            const SizedBox(height: 8.0),
-            Button.outlined(
-              onPressed: () {
-                showModalBottomSheet(
-                  context: context,
-                  useSafeArea: true,
-                  isScrollControlled: true,
-                  builder: (BuildContext context) {
-                    return LoginBottomSheet(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const MahasiswaPage(),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                );
-              },
-              label: 'MAHASISWA',
+              label: 'LOGIN',
             ),
             const SizedBox(height: 32.0),
             const Text.rich(
