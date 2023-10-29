@@ -84,7 +84,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                         const Text(
-                          "Diaz Brother",
+                          "Muhammad Arif Nurhuda",
                           style: TextStyle(
                             fontWeight: FontWeight.w700,
                             color: ColorName.primary,
