@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_siakad_app/pages/mahasiswa/jadwal_matkul_page.dart';
 
 import '../../common/components/menu_card.dart';
 import '../../common/components/search_input.dart';
@@ -92,7 +93,7 @@ class _DashboardPageState extends State<DashboardPage> {
           backgroundColor: const Color(0xffFF68F0),
           onPressed: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return const SchedulesPage();
+              return const JadwalMatkulPage();
             }));
           },
           imagePath: Images.jadwal,
