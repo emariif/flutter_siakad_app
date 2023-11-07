@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_siakad_app/pages/mahasiswa/jadwal_matkul_page.dart';
+import 'package:flutter_siakad_app/pages/mahasiswa/widgets/sample_map_page.dart';
 
 import '../../common/components/menu_card.dart';
 import '../../common/components/search_input.dart';
@@ -38,6 +39,18 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
             Row(
               children: [
+                IconButton(
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return const SampleMapPage();
+                    }));
+                  },
+                  icon: const Icon(
+                    Icons.map_rounded,
+                    color: ColorName.primary,
+                  ),
+                ),
                 IconButton(
                   onPressed: () {
                     Navigator.push(context,

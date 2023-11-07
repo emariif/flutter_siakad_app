@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dash/flutter_dash.dart';
+import 'package:flutter_siakad_app/pages/mahasiswa/widgets/qrcode_page.dart';
+
+import 'package:flutter/services.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 
 import '../../common/components/buttons.dart';
 import '../../common/components/custom_scaffold.dart';
@@ -28,8 +33,78 @@ class _AbsensiPageState extends State<AbsensiPage> {
     const TimeOfDay(hour: 17, minute: 30),
   ];
 
+  late GoogleMapController mapController;
+  double? latitude;
+  double? longitude;
+
+  Future<void> getCurrentPosition() async {
+    try {
+      // final Location location = Location();
+      // late LocationData locationData;
+
+      // await _getPermission(location);
+
+      // locationData = await location.getLocation();
+
+      // latitude = locationData.latitude;
+      // longitude = locationData.longitude;
+
+      Location location = Location();
+
+      bool _serviceEnabled;
+      PermissionStatus _permissionGranted;
+      LocationData _locationData;
+
+      _serviceEnabled = await location.serviceEnabled();
+      if (!_serviceEnabled) {
+        _serviceEnabled = await location.requestService();
+        if (!_serviceEnabled) {
+          return;
+        }
+      }
+
+      _permissionGranted = await location.hasPermission();
+      if (_permissionGranted == PermissionStatus.denied) {
+        _permissionGranted = await location.requestPermission();
+        if (_permissionGranted != PermissionStatus.granted) {
+          return;
+        }
+      }
+
+      _locationData = await location.getLocation();
+      latitude = _locationData.latitude;
+      longitude = _locationData.longitude;
+
+      setState(() {});
+    } on PlatformException catch (e) {
+      if (e.code == 'IO_ERROR') {
+        debugPrint(
+            'A network error occured trying to lookup the supplied coordinate');
+      } else {
+        debugPrint('Failed to lookup coordinates: ${e.message}');
+      }
+    } catch (e) {
+      debugPrint('An unknown error occured: $e');
+    }
+  }
+
+  void _onMapCreated(GoogleMapController controller) {
+    mapController = controller;
+  }
+
+  @override
+  void initState() {
+    getCurrentPosition();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final LatLng _center = LatLng(latitude ?? 0, longitude ?? 0);
+    Marker marker = Marker(
+      markerId: const MarkerId("marker_1"),
+      position: LatLng(latitude ?? 0, longitude ?? 0),
+    );
     return CustomScaffold(
       // useExtraPadding: true,
       body: ListView(
@@ -62,7 +137,7 @@ class _AbsensiPageState extends State<AbsensiPage> {
                         borderRadius:
                             const BorderRadius.all(Radius.circular(50.0)),
                         child: Image.network(
-                          'https://avatars.githubusercontent.com/u/534678?v=4',
+                          'https://picsum.photos/200',
                           width: 72.0,
                           height: 72.0,
                           fit: BoxFit.cover,
@@ -90,7 +165,7 @@ class _AbsensiPageState extends State<AbsensiPage> {
                             ),
                           ),
                           const Text(
-                            "Saiful Bahri",
+                            "Muhammad Arif Nurhuda",
                             style: TextStyle(
                               fontWeight: FontWeight.w700,
                               color: ColorName.primary,
@@ -133,21 +208,32 @@ class _AbsensiPageState extends State<AbsensiPage> {
               ],
             ),
           ),
-          const SizedBox(height: 10.0),
-          Image.asset(
-            Images.maps,
-            height: 184.0,
-            fit: BoxFit.cover,
+          const SizedBox(height: 20.0),
+          // Image.asset(
+          //   Images.maps,
+          //   height: 184.0,
+          //   fit: BoxFit.cover,
+          // ),
+          SizedBox(
+            height: 184,
+            child: latitude == null ? const SizedBox() : GoogleMap(
+              onMapCreated: _onMapCreated,
+              initialCameraPosition: CameraPosition(
+                target: _center,
+                zoom: 18.0,
+              ),
+              markers: {marker},
+            ),
           ),
           const SizedBox(height: 20.0),
           Button.filled(
             onPressed: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => const ScanPage(),
-              //   ),
-              // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const QrcodePage(),
+                ),
+              );
             },
             label: 'SCAN',
             icon: const ImageIcon(
